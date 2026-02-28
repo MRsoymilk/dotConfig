@@ -1,6 +1,6 @@
 # dotConfig
 
-![view](view.jpg)
+![view](README/view.jpg)
 
 ## alacritty
 
