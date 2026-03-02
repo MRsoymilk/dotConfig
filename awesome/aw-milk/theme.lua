@@ -7,44 +7,44 @@ local themes_path                               = gfs.get_configuration_dir() ..
 
 local theme                                     = {}
 
-theme.font                                      = "sans 8"
+theme.font                                      = "sans 16"
 
 theme.bg_normal                                 = "#14121a"
 theme.bg_focus                                  = "#2a1f3d"
-theme.bg_urgent                                 = "#a0002a"
+theme.bg_urgent                                 = "#d3290f"
 theme.bg_minimize                               = "#1c1826"
 theme.bg_systray                                = theme.bg_normal
 
 theme.fg_normal                                 = "#b8b0d8"
-theme.fg_focus                                  = "#39ff14"
+theme.fg_focus                                  = "#52d053"
 theme.fg_urgent                                 = "#ffffff"
 theme.fg_minimize                               = "#6c6780"
 
 theme.border_width                              = dpi(1)
 theme.border_color_normal                       = "#241a36"
-theme.border_color_active                       = "#39ff14"
+theme.border_color_active                       = "#52d053"
 theme.border_color_marked                       = "#ff007f"
 
 -- Taglist
-theme.taglist_bg_focus                          = "#39ff14"
+theme.taglist_bg_focus                          = "#52d053"
 theme.taglist_fg_focus                          = "#000000"
 theme.taglist_bg_occupied                       = "#2a1f3d"
-theme.taglist_fg_occupied                       = "#b8b0d8"
+theme.taglist_fg_occupied                       = "#e6770b"
 theme.taglist_bg_empty                          = "#14121a"
-theme.taglist_fg_empty                          = "#444050"
+theme.taglist_fg_empty                          = "#765898"
 
 -- Tasklist
 theme.tasklist_bg_focus                         = "#2a1f3d"
-theme.tasklist_fg_focus                         = "#39ff14"
+theme.tasklist_fg_focus                         = "#52d053"
 
 -- Menu
 theme.menu_bg_normal                            = "#1c1826"
-theme.menu_bg_focus                             = "#39ff14"
+theme.menu_bg_focus                             = "#52d053"
 theme.menu_fg_focus                             = "#000000"
 
 -- Notifications
 theme.notification_bg                           = "#1c1826"
-theme.notification_fg                           = "#39ff14"
+theme.notification_fg                           = "#52d053"
 
 -- Titlebar
 theme.titlebar_bg_focus                         = "#2a1f3d"
@@ -55,7 +55,7 @@ theme.taglist_squares_unsel                     = themes_path .. "taglist/square
 
 theme.menu_submenu_icon                         = themes_path .. "submenu.png"
 theme.menu_height                               = dpi(32)
-theme.menu_width                                = dpi(100)
+theme.menu_width                                = dpi(200)
 
 -- Define the image to load
 theme.titlebar_close_button_normal              = themes_path .. "titlebar/close_normal.png"
