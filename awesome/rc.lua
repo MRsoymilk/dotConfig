@@ -243,16 +243,22 @@ screen.connect_signal("request::desktop_decoration", function(s)
         position = "top",
         screen   = s,
         height   = 28,
-        widget   = {
+    }
+
+    if s == screen.primary then
+        s.mywibox:setup {
             layout = wibox.layout.align.horizontal,
-            { -- Left widgets
+
+            { -- Left
                 layout = wibox.layout.fixed.horizontal,
                 mylauncher,
                 s.mytaglist,
                 s.mypromptbox,
             },
-            s.mytasklist, -- Middle widget
-            {             -- Right widgets
+
+            s.mytasklist,
+
+            {
                 layout = wibox.layout.fixed.horizontal,
                 fs_widget({ mounts = { '/var', '/home', '/boot', '/' } }),
                 cpu_widget({
@@ -287,7 +293,18 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 s.mylayoutbox,
             },
         }
-    }
+    else
+        s.mywibox:setup {
+            layout = wibox.layout.align.horizontal,
+
+            {
+                layout = wibox.layout.fixed.horizontal,
+                s.mytaglist,
+            },
+            s.mytasklist,
+            nil,
+        }
+    end
 end)
 
 -- }}}
