@@ -58,11 +58,24 @@ myawesomemenu = {
     { "quit",        function() awesome.quit() end },
 }
 
+myloginctlmenu = {
+    { "lock", function()
+        awful.spawn.with_shell("i3lock -i '" .. beautiful.lock .. "' --tiling")
+    end },
+    { "reboot", function()
+        awful.spawn({ "loginctl", "reboot" })
+    end },
+    { "poweroff", function()
+        awful.spawn({ "loginctl", "poweroff" })
+    end },
+}
+
 mymainmenu = awful.menu({
     items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
         { "open terminal", terminal },
         { "firefox",       firefox },
-        { "vscode",        vscode }
+        { "vscode",        vscode },
+        { "loginctl",      myloginctlmenu },
     }
 })
 
