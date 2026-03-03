@@ -2,6 +2,10 @@
 
 ![view](README/view.jpg)
 
+## X
+
+use `.xinitrc`
+
 ## font
 
 ```bash
