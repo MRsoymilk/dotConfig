@@ -71,10 +71,11 @@ myloginctlmenu = {
 }
 
 mymainmenu = awful.menu({
-    items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+    items = { { "awesome", myawesomemenu,     beautiful.awesome_icon },
         { "open terminal", terminal },
         { "firefox",       firefox },
         { "vscode",        vscode },
+        { "cmus",          terminal .. " -e cmus" },
         { "loginctl",      myloginctlmenu },
     }
 })
@@ -315,7 +316,10 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 s.mytaglist,
             },
             s.mytasklist,
-            nil,
+            {
+                layout = wibox.layout.fixed.horizontal,
+                s.mylayoutbox,
+            },
         }
     end
 end)
@@ -337,7 +341,6 @@ awful.keyboard.append_global_keybindings({
     awful.key({}, "XF86MonBrightnessUp", function()
         awful.spawn("xbacklight -inc 5")
     end),
-
     awful.key({}, "XF86MonBrightnessDown", function()
         awful.spawn("xbacklight -dec 5")
     end),
@@ -348,6 +351,15 @@ awful.keyboard.append_global_keybindings({
         end,
         { description = "lock screen", group = "system" }
     ),
+    awful.key({}, "XF86AudioPlay", function()
+        awful.spawn("playerctl play-pause")
+    end, { description = "play pause", group = "audio" }),
+    awful.key({}, "XF86AudioNext", function()
+        awful.spawn("playerctl next")
+    end, { description = "next track", group = "audio" }),
+    awful.key({}, "XF86AudioPrev", function()
+        awful.spawn("playerctl previous")
+    end, { description = "previous track", group = "audio" }),
     awful.key({}, "XF86AudioRaiseVolume", function()
         awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")
     end, { description = "increase volume", group = "audio" }),
@@ -391,9 +403,9 @@ awful.keyboard.append_global_keybindings({
 
 -- Tags related keybindings
 awful.keyboard.append_global_keybindings({
-    awful.key({ modkey, }, "Left", awful.tag.viewprev,
+    awful.key({ modkey, }, "[", awful.tag.viewprev,
         { description = "view previous", group = "tag" }),
-    awful.key({ modkey, }, "Right", awful.tag.viewnext,
+    awful.key({ modkey, }, "]", awful.tag.viewnext,
         { description = "view next", group = "tag" }),
     awful.key({ modkey, }, "Escape", awful.tag.history.restore,
         { description = "go back", group = "tag" }),
