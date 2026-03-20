@@ -375,7 +375,19 @@ awful.keyboard.append_global_keybindings({
         end,
         { description = "rofi drun", group = "launcher" }
     ),
-    awful.key({ modkey, }, "s", hotkeys_popup.show_help,
+    awful.key({ modkey, }, "s",
+        function()
+            awful.spawn("flameshot gui")
+        end,
+        { description = "flameshot", group = "launcher" }
+    ),
+    awful.key({ modkey, "Shift" }, "s",
+        function()
+            awful.spawn("flameshot gui -d 1000")
+        end,
+        { description = "flameshot after delay 1000ms", group = "launcher" }
+    ),
+    awful.key({ modkey, }, "h", hotkeys_popup.show_help,
         { description = "show help", group = "awesome" }),
     awful.key({ modkey, }, "Delete", function() mymainmenu:show() end,
         { description = "show main menu", group = "awesome" }),
@@ -395,10 +407,6 @@ awful.keyboard.append_global_keybindings({
         { description = "lua execute prompt", group = "awesome" }),
     awful.key({ modkey, }, "Return", function() awful.spawn(terminal) end,
         { description = "open a terminal", group = "launcher" }),
-    awful.key({ modkey }, "r", function() awful.screen.focused().mypromptbox:run() end,
-        { description = "run prompt", group = "launcher" }),
-    awful.key({ modkey }, "p", function() menubar.show() end,
-        { description = "show the menubar", group = "launcher" }),
 })
 
 -- Tags related keybindings
