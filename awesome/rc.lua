@@ -136,6 +136,7 @@ local cw = calendar_widget({
     previous_month_button = 1,
     next_month_button = 3,
 })
+local nvidia_widget = require("awesome-wm-widgets.nvidia-widget.nvidia-widget")
 local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 local fs_widget = require("awesome-wm-widgets.fs-widget.fs-widget")
 local net_speed_widget = require("awesome-wm-widgets.net-speed-widget.net-speed")
@@ -204,23 +205,85 @@ screen.connect_signal("request::desktop_decoration", function(s)
     }
 
     -- Create a tasklist widget
+    -- 在 tasklist 定义之前，添加一个变量存储菜单
+    local client_menu = nil
+
+    -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
-        screen          = s,
-        filter          = function(c, screen)
+        screen = s,
+        filter = function(c, screen)
             return c.screen == screen and c == client.focus
         end,
-        buttons         = {
-            awful.button({}, 1, function(c)
-                c:activate { context = "tasklist", action = "toggle_minimization" }
+        buttons = {
+            -- 左键：切换显示/隐藏当前tag的窗口菜单
+            awful.button({}, 1, function()
+                -- 如果菜单已存在，关闭它
+                if client_menu then
+                    client_menu:hide()
+                    client_menu = nil
+                    return
+                end
+
+                local current_tag = s.selected_tag
+                local naughty = require("naughty")
+
+                -- 手动获取当前tag的窗口
+                local clients = {}
+                for _, c in ipairs(client.get()) do
+                    if c.screen == s then
+                        for _, tag in ipairs(c:tags()) do
+                            if tag == current_tag then
+                                table.insert(clients, c)
+                                break
+                            end
+                        end
+                    end
+                end
+
+                -- 构建菜单项
+                local items = {}
+                for _, c in ipairs(clients) do
+                    table.insert(items, {
+                        c.name or "untitled",
+                        function()
+                            c:jump_to()
+                            if client_menu then
+                                client_menu:hide()
+                                client_menu = nil
+                            end
+                        end,
+                        c.icon
+                    })
+                end
+
+                -- 如果没有窗口
+                if #items == 0 then
+                    naughty.notify({ text = "No clients in current tag" })
+                    return
+                end
+
+                -- 显示菜单
+                client_menu = awful.menu({
+                    items = items,
+                    theme = {
+                        width = s.mywibox.width
+                    }
+                })
+                client_menu:show()
             end),
+
+            -- 右键：显示所有窗口
             awful.button({}, 3, function()
-                local width = s.mywibox.width
                 awful.menu.client_list {
                     theme = {
-                        width = width
+                        width = s.mywibox.width
                     },
+                    filter = function(c)
+                        return c.screen == s
+                    end
                 }
             end),
+
             awful.button({}, 4, function() awful.client.focus.byidx(-1) end),
             awful.button({}, 5, function() awful.client.focus.byidx(1) end),
         },
@@ -229,15 +292,15 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 {
                     {
                         {
-                            id     = 'icon_role',
+                            id = 'icon_role',
                             widget = wibox.widget.imagebox,
                         },
                         margins = 4,
-                        widget  = wibox.container.margin,
+                        widget = wibox.container.margin,
                     },
                     {
                         {
-                            id     = 'text_role',
+                            id = 'text_role',
                             widget = wibox.widget.textbox,
                         },
                         widget = wibox.container.place,
@@ -247,7 +310,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 },
                 widget = wibox.container.place,
             },
-            id     = 'background_role',
+            id = 'background_role',
             widget = wibox.container.background,
         },
     }
@@ -280,10 +343,13 @@ screen.connect_signal("request::desktop_decoration", function(s)
                     step_width = 2,
                     step_spacing = 0,
                 }),
+                nvidia_widget({ popup_bg = "#2E3440A0" }),
                 ram_widget({
                     widget_show_buf = true,
                 }),
-                net_speed_widget(),
+                net_speed_widget({
+                    width = 80,
+                }),
                 wibox.widget.systray(),
                 brightness_widget({
                     type = 'icon_and_text',
