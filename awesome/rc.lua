@@ -121,6 +121,130 @@ end)
 
 -- {{{ Wibar
 
+local minimized_menu = nil
+
+local minimized_text = wibox.widget {
+    text   = "▸ Minimize",
+    widget = wibox.widget.textbox,
+}
+
+local minimized_widget = wibox.widget {
+    {
+        minimized_text,
+        left   = 8,
+        right  = 8,
+        widget = wibox.container.margin,
+    },
+    visible = false,
+    widget  = wibox.container.background,
+}
+
+local function update_minimized_widget()
+    local count = 0
+
+    for _, c in ipairs(client.get()) do
+        if c.minimized then
+            count = count + 1
+        end
+    end
+
+    minimized_widget.visible = count > 0
+
+    if count == 0 then
+        if minimized_menu then
+            minimized_menu:hide()
+            minimized_menu = nil
+        end
+
+        minimized_text.text = "▸ Minimize"
+    end
+end
+
+local function hide_minimized_menu()
+    local menu = minimized_menu
+
+    if menu then
+        minimized_menu = nil
+        menu:hide()
+    end
+
+    minimized_text.text = "▸ Minimize"
+end
+
+local function show_minimized_menu()
+    -- 再点一次按钮：关闭
+    if minimized_menu then
+        hide_minimized_menu()
+        return
+    end
+
+    local items = {}
+
+    for _, c in ipairs(client.get()) do
+        if c.minimized then
+            table.insert(items, {
+                c.name or "Unnamed",
+                function()
+                    c.minimized = false
+                    c:jump_to()
+                    client.focus = c
+                    c:raise()
+
+                    hide_minimized_menu()
+                    update_minimized_widget()
+                end,
+                c.icon,
+            })
+        end
+    end
+
+    if #items == 0 then
+        update_minimized_widget()
+        return
+    end
+
+    local menu = awful.menu({
+        items = items,
+    })
+
+    minimized_menu = menu
+
+    -- 菜单由于 Esc / 点击其他地方等原因消失时，
+    -- 同步恢复顶部箭头。
+    menu.wibox:connect_signal("property::visible", function()
+        if not menu.wibox.visible then
+            if minimized_menu == menu then
+                minimized_menu = nil
+            end
+
+            minimized_text.text = "▸ Minimize"
+        end
+    end)
+
+    minimized_text.text = "▾ Minimize"
+    menu:show()
+end
+
+minimized_widget:buttons(
+    gears.table.join(
+        awful.button({}, 1, show_minimized_menu)
+    )
+)
+
+client.connect_signal("property::minimized", function()
+    update_minimized_widget()
+end)
+
+client.connect_signal("manage", function()
+    update_minimized_widget()
+end)
+
+client.connect_signal("unmanage", function()
+    update_minimized_widget()
+end)
+
+update_minimized_widget()
+
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
@@ -370,6 +494,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
                     show_current_level = true,
                     display_notification = true,
                 }),
+		minimized_widget,
                 s.mylayoutbox,
             },
         }
@@ -384,6 +509,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
             s.mytasklist,
             {
                 layout = wibox.layout.fixed.horizontal,
+		minimized_widget,
                 s.mylayoutbox,
             },
         }
