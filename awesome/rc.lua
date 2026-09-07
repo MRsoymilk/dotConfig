@@ -248,7 +248,11 @@ update_minimized_widget()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 
-local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+local mysystray = wibox.widget.systray()
+mysystray:set_screen("primary")
+mysystray:set_base_size(20)
+
+local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 local calendar_widget = require("awesome-wm-widgets.calendar-widget.calendar")
 local cw = calendar_widget({
@@ -474,7 +478,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 net_speed_widget({
                     width = 80,
                 }),
-                wibox.widget.systray(),
+                mysystray,
                 brightness_widget({
                     type = 'icon_and_text',
                     program = 'xbacklight',
@@ -509,6 +513,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
             s.mytasklist,
             {
                 layout = wibox.layout.fixed.horizontal,
+                mysystray,
 		minimized_widget,
                 s.mylayoutbox,
             },
