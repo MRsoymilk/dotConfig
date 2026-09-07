@@ -494,9 +494,9 @@ screen.connect_signal("request::desktop_decoration", function(s)
                     timeout = 5
                 },
                 mytextclock,
-                battery_widget({
+                batteryarc_widget({
                     show_current_level = true,
-                    display_notification = true,
+                    arc_thickness = 1,
                 }),
 		minimized_widget,
                 s.mylayoutbox,
